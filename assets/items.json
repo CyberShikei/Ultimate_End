@@ -1,0 +1,16 @@
+{
+    "items": [
+        {
+            "id": 101,
+            "name": "Rusty Sword",
+            "description": "An old, worn-out sword.",
+            "item_type": "Weapon",
+            "stat_modifier": {
+                "hp": 0,
+                "attack": 3,
+                "defense": 0,
+                "agility": 0
+            }
+        }
+    ]
+}
