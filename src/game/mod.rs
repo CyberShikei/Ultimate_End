@@ -22,6 +22,10 @@ pub fn process_command(state: &mut persistence::GameState, command: &str) -> Res
 
             if state.enemies[state.enemy_index].stats.hp <= 0 {
                 println!("Enemy defeated!");
+                // remove enemy from the state
+                state.remove_enemy(state.enemy_index);
+                // set a new enemy
+                let new_enemy_index = rand::random::<usize>() % state.enemies.len();
             }
 
             if state.is_player_alive() == false {
@@ -72,14 +76,48 @@ pub fn process_command(state: &mut persistence::GameState, command: &str) -> Res
             }
             Ok(())
         }
-        "use_sword" => {
+        "show inventory" => {
+            let player = &state.players[state.player_index];
+            for item in &player.inventory {
+                println!("{:?}", item);
+            }
+            Ok(())
+        }
+        "equip" => {
+            let player = &mut state.players[state.player_index];
+            println!("Inventory: {}", player.get_inventory_string());
+            println!("Enter item id to equip:");
+            let mut input = String::new();
+            std::io::stdin().read_line(&mut input).unwrap();
+            let item_id = input.trim().parse::<usize>().unwrap();
+
+            let item = player.get_item(item_id).clone();
+            player.equip_item(item);
+            Ok(())
+        }
+        "unequip" => {
+            let player = &mut state.players[state.player_index];
+            println!("Equipment: {:?}", player.get_equipment_string());
+            println!("Enter item id to unequip:");
+            let mut input = String::new();
+            std::io::stdin().read_line(&mut input).unwrap();
+            let item_id = input.trim().parse::<usize>().unwrap();
+
+            let item = player.get_equipment(item_id).clone();
+            player.unequip_item(item);
+            Ok(())
+        }
+        "pickup_sword" => {
             let player = &mut state.players[state.player_index];
             let sword = state.items[0].clone();
-            player.apply_item(&sword);
+            player.add_item_to_inventory(sword);
+            // player.equip_item(player.inventory[0]);
             Ok(())
         }
         "help" => {
-            println!("Available commands: attack, run, status, show enemies, help, exit");
+            println!(
+                "Available commands: attack, run, (un)equip, status, show enemies, show inventory, help, exit"
+            );
             Ok(())
         }
         _ => Err("Unknown command. Type 'help' for a list of commands.".into()),

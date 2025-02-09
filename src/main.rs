@@ -32,7 +32,6 @@ fn main() {
             if let Err(e) = state.load_items(items_file) {
                 eprintln!("Failed to load items: {}", e);
             }
-            println!("Items: {}", state.items.len());
             state
         }
     };

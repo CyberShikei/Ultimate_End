@@ -9,7 +9,7 @@ pub struct Entity {
     pub stats: Stats,
     pub inventory: Vec<Item>,
     // You could later extend with equipment or abilities:
-    // pub equipment: Equipment,
+    pub equipment: Vec<Item>,
 }
 
 impl Entity {
@@ -20,6 +20,7 @@ impl Entity {
             name: name.to_string(),
             stats: Stats::new(),
             inventory: Vec::new(),
+            equipment: Vec::new(),
         }
     }
 
@@ -29,6 +30,59 @@ impl Entity {
         self.stats.attack += item.stat_modifier.attack;
         self.stats.defense += item.stat_modifier.defense;
         self.stats.agility += item.stat_modifier.agility;
+    }
+
+    fn apply_equipment(&mut self) {
+        for item in &self.equipment {
+            self.stats.hp += item.stat_modifier.hp;
+            self.stats.attack += item.stat_modifier.attack;
+            self.stats.defense += item.stat_modifier.defense;
+            self.stats.agility += item.stat_modifier.agility;
+        }
+    }
+
+    fn un_apply_equipment(&mut self) {
+        for item in &self.equipment {
+            self.stats.hp -= item.stat_modifier.hp;
+            self.stats.attack -= item.stat_modifier.attack;
+            self.stats.defense -= item.stat_modifier.defense;
+            self.stats.agility -= item.stat_modifier.agility;
+        }
+    }
+
+    pub fn equip_item(&mut self, item: Item) {
+        self.un_apply_equipment();
+        if self.is_item_in_inventory(&item) {
+            if self.is_item_equipped(&item) {
+                println!("Item already equipped.");
+            } else if self.is_equipment_slot_taken(&item) {
+                println!("Item type already equipped.");
+            } else {
+                let eq_item = item.clone();
+                self.equipment.push(eq_item);
+                self.remove_item_from_inventory(&item);
+                println!("Equipped item: {}", item.name);
+            }
+        } else {
+            println!("Item not in inventory.");
+        }
+        self.apply_equipment();
+    }
+
+    fn remove_item_from_inventory(&mut self, item: &Item) {
+        self.inventory.retain(|x| x != item);
+    }
+
+    pub fn unequip_item(&mut self, item: Item) {
+        if self.equipment.contains(&item) {
+            self.equipment.retain(|x| x != &item);
+            self.stats.hp -= item.stat_modifier.hp;
+            self.stats.attack -= item.stat_modifier.attack;
+            self.stats.defense -= item.stat_modifier.defense;
+            self.stats.agility -= item.stat_modifier.agility;
+            println!("Unequipped item: {}", item.name);
+            self.add_item_to_inventory(item);
+        }
     }
 
     // Get entity string for displaying in the UI.
@@ -43,12 +97,55 @@ impl Entity {
     pub fn get_inventory_string(&self) -> String {
         let mut inventory_string = String::new();
         for item in &self.inventory {
-            inventory_string.push_str(&format!("Item: {}\n", item.name));
+            inventory_string.push_str(&format!("ID: {}, Name: {}", item.id, item.name));
         }
         inventory_string
     }
 
+    pub fn get_equipment_string(&self) -> String {
+        let mut equipment_string = String::new();
+        for item in &self.equipment {
+            equipment_string.push_str(&format!("ID: {}, Name: {}", item.id, item.name));
+        }
+        equipment_string
+    }
+
+    pub fn get_equipment(&self, item_id: usize) -> &Item {
+        for item in &self.equipment {
+            if item.id == item_id as u32 {
+                return item;
+            }
+        }
+        panic!("Item not found in equipment.");
+    }
+
+    pub fn get_item(&self, item_id: usize) -> &Item {
+        for item in &self.inventory {
+            if item.id == item_id as u32 {
+                return item;
+            }
+        }
+        panic!("Item not found in inventory.");
+    }
+
     pub fn add_item_to_inventory(&mut self, item: Item) {
         self.inventory.push(item);
+    }
+
+    fn is_item_in_inventory(&self, item: &Item) -> bool {
+        self.inventory.contains(item)
+    }
+
+    fn is_item_equipped(&self, item: &Item) -> bool {
+        self.equipment.contains(&item)
+    }
+
+    fn is_equipment_slot_taken(&self, item: &Item) -> bool {
+        for i in &self.equipment {
+            if i.item_type == item.item_type {
+                return true;
+            }
+        }
+        false
     }
 }

@@ -98,6 +98,25 @@ impl GameState {
         Ok(())
     }
 
+    pub fn reload(&mut self, entities_path: &str, items_path: &str) -> io::Result<()> {
+        self.load_entities(entities_path)?;
+        self.load_items(items_path)?;
+        Ok(())
+    }
+
+    fn get_entity_by_id(&self, id: u32) -> Option<Entity> {
+        for entity in self.entities.clone() {
+            if entity.id == id {
+                return Some(entity);
+            }
+        }
+        None
+    }
+
+    pub fn remove_enemy(&mut self, index: usize) {
+        self.enemies.remove(index);
+    }
+
     /// Set Player Index
     pub fn set_player(&mut self, index: usize) {
         self.player_index = index;
