@@ -86,6 +86,20 @@ impl Entity {
         self.apply_equipment();
     }
 
+    pub fn use_item(&mut self, item: Item) {
+        if self.is_item_in_inventory(&item) {
+            if item.item_type == ItemType::Consumable {
+                self.stats.apply_modifier(item.stat_modifier);
+                self.remove_item_from_inventory(&item);
+                println!("Used item: {}", item.name);
+            } else {
+                println!("Item is not a consumable.");
+            }
+        } else {
+            println!("Item not in inventory.");
+        }
+    }
+
     fn remove_item_from_inventory(&mut self, item: &Item) {
         self.inventory.retain(|x| x != item);
     }
