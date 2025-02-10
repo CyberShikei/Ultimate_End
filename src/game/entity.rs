@@ -1,5 +1,9 @@
 // src/game/entity.rs
-use crate::game::{item::Item, skills::Skill, stats::Stats};
+use crate::game::{
+    item::{Item, ItemType},
+    skills::Skill,
+    stats::Stats,
+};
 use rand::Rng;
 use serde::{Deserialize, Serialize};
 
@@ -64,7 +68,9 @@ impl Entity {
     pub fn equip_item(&mut self, item: Item) {
         self.un_apply_equipment();
         if self.is_item_in_inventory(&item) {
-            if self.is_item_equipped(&item) {
+            if item.item_type == ItemType::Consumable {
+                println!("Cannot equip consumable item.");
+            } else if self.is_item_equipped(&item) {
                 println!("Item already equipped.");
             } else if self.is_equipment_slot_taken(&item) {
                 println!("Item type already equipped.");

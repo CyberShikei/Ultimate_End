@@ -11,6 +11,54 @@
                 "defense": 0,
                 "agility": 0
             }
+        },
+        {
+            "id": 102,
+            "name": "Stick Wand",
+            "description": "A stick that can be used as a wand.",
+            "item_type": "Weapon",
+            "stat_modifier": {
+                "hp": 0,
+                "attack": 2,
+                "defense": 0,
+                "agility": 0
+            }
+        }.
+        {
+            "id": 301,
+            "name": "Leather Armour",
+            "description": "A set of leather armour.",
+            "item_type": "Armour",
+            "stat_modifier": {
+                "hp": 0,
+                "attack": 0,
+                "defense": 2,
+                "agility": 0
+            }
+        },
+        {
+            "id": 302,
+            "name": "Iron Helmet",
+            "description": "A helmet made of iron.",
+            "item_type": "Armour",
+            "stat_modifier": {
+                "hp": 0,
+                "attack": 0,
+                "defense": 3,
+                "agility": 0
+            }
+        },
+        {
+            "id": 401,
+            "name": "Health Potion",
+            "description": "A potion that restores health.",
+            "item_type": "Consumable",
+            "stat_modifier": {
+                "hp": 20,
+                "attack": 0,
+                "defense": 0,
+                "agility": 0
+            }
         }
     ]
 }
