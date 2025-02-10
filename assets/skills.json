@@ -1,7 +1,17 @@
 {
     "skills": [
         {
-            "id": 1000,
+            "id": 10000,
+            "name": "Basic Attack",
+            "description": "A basic attack dealing 5 damage to the target.",
+            "power": 5,
+            "cost": 0,
+            "skill_type": "Active",
+            "skill_target": "SingleTarget",
+            "skill_class": "Physical"
+        },
+        {
+            "id": 10010,
             "name": "Fireball",
             "description": "A fireball spell that deals 10 damage to the target.",
             "power": 10,

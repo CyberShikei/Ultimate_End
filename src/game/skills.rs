@@ -1,25 +1,25 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum SkillType {
     Passive,
     Active,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum SkillTarget {
     SelfTarget,
     SingleTarget,
     MultiTarget,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum SkillClass {
     Physical,
     Magical,
 }
 
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub struct Skill {
     pub id: u32,
     pub name: String,
@@ -56,8 +56,8 @@ impl Skill {
 
     pub fn get_skill_string(&self) -> String {
         format!(
-            "Skill: {}\nDescription: {}\nType: {:?}\nTarget: {:?}\nClass: {:?}\nPower: {}\nCost: {}\n",
-            self.name, self.description, self.skill_type, self.skill_target, self.skill_class, self.power, self.cost
+            "ID, {}\nSkill: {}\nDescription: {}\nType: {:?}\nTarget: {:?}\nClass: {:?}\nPower: {}\nCost: {}\n",
+            self.id, self.name, self.description, self.skill_type, self.skill_target, self.skill_class, self.power, self.cost
         )
     }
 }

@@ -76,8 +76,8 @@ pub fn process_command(state: &mut persistence::GameState, command: &str) -> Res
             let player = &state.players[state.player_index];
             let enemy = &state.enemies[state.enemy_index];
 
-            println!("{}: {:?}", player.name, player.stats.get_stats_string());
-            println!("{}: {:?}", enemy.name, enemy.stats.get_stats_string());
+            println!("[PLAYER]\n{}", player.get_entity_string());
+            println!("[ENEMY]\n{}", enemy.get_entity_string());
             Ok(())
         }
         "show enemies" => {

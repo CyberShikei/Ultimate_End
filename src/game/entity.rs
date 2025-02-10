@@ -99,7 +99,7 @@ impl Entity {
     // Get entity string for displaying in the UI.
     pub fn get_entity_string(&self) -> String {
         format!(
-            "Name: {}\nStats:\n{}",
+            "Name: {}\n\tStats:\n{}",
             self.name,
             self.stats.get_stats_string()
         )
@@ -179,5 +179,9 @@ impl Entity {
             }
         }
         false
+    }
+
+    fn is_inventory(&self) -> bool {
+        !self.inventory.is_empty()
     }
 }

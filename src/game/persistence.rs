@@ -1,6 +1,6 @@
 // src/game/persistence.rs
 use crate::game::entity::Entity;
-use crate::game::{item::Item, skills::Skill};
+use crate::game::{item::Item, skills::Skill, stats::Stats};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::{self, ErrorKind};
@@ -20,8 +20,18 @@ pub struct GameState {
 }
 
 #[derive(Serialize, Deserialize)]
+struct RawEntity {
+    id: u32,
+    name: String,
+    stats: Stats,
+    inventory: Vec<u32>,
+    equipment: Vec<u32>,
+    skills: Vec<u32>,
+}
+
+#[derive(Serialize, Deserialize)]
 struct EntitiesWrapper {
-    entities: Vec<Entity>,
+    entities: Vec<RawEntity>,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -75,17 +85,86 @@ impl GameState {
     /// Load Enities
     pub fn load_entities(&mut self, path: &str) -> io::Result<()> {
         let data = fs::read_to_string(path)?;
+        // entity skills, inventory and equipment are saved as ids or names
+        // we need to convert them to actual objects
+        // we can do this by iterating over the entities and checking that the ids
+        // exist in the GameState Items and Skills
+        // if they do, we can replace the id with the actual object
+        // if they don't, we must handle it gracefully
+        // NEW WAY
+        // parse data to replace ids with actual objects
         let wrapper: EntitiesWrapper = serde_json::from_str(&data).map_err(|e| {
             io::Error::new(
                 ErrorKind::InvalidData,
                 format!("Deserialization error: {}", e),
             )
         })?;
-        self.entities = wrapper.entities;
+        // iterate over entities and replace ids with actual objects
+        for entity in wrapper.entities {
+            let mut new_entity = Entity {
+                id: entity.id,
+                name: entity.name,
+                stats: entity.stats,
+                inventory: Vec::new(),
+                equipment: Vec::new(),
+                skills: Vec::new(),
+            };
+            for i in 0..entity.skills.len() {
+                let skill_id = entity.skills[i];
+                let skill = self.get_skill_by_id(skill_id);
+                if let Some(skill) = skill {
+                    new_entity.skills.push(skill);
+                    println!(
+                        "added skill {} to entity {}",
+                        new_entity.skills[i].name, new_entity.name
+                    );
+                } else {
+                    println!(
+                        "Skill with id {} not found for entity {}",
+                        skill_id, new_entity.name
+                    );
+                }
+            }
+            for i in 0..entity.inventory.len() {
+                let item_id = entity.inventory[i];
+                let item = self.get_item_by_id(item_id);
+                if let Some(item) = item {
+                    new_entity.inventory[i] = item;
+                } else {
+                    println!(
+                        "Item with id {} not found for entity {}",
+                        item_id, new_entity.name
+                    );
+                }
+            }
+            for i in 0..entity.equipment.len() {
+                let item_id = entity.equipment[i];
+                let item = self.get_item_by_id(item_id);
+                if let Some(item) = item {
+                    new_entity.equipment[i] = item;
+                } else {
+                    println!(
+                        "Item with id {} not found for entity {}",
+                        item_id, new_entity.name
+                    );
+                }
+            }
+            self.entities.push(new_entity);
+        }
+
+        // OLD WAY
+        // let wrapper: EntitiesWrapper = serde_json::from_str(&data).map_err(|e| {
+        //     io::Error::new(
+        //         ErrorKind::InvalidData,
+        //         format!("Deserialization error: {}", e),
+        //     )
+        // })?;
+        // self.entities = wrapper.entities;
+
         for entity in self.entities.clone() {
-            if entity.id < 100 {
+            if entity.id < 1000 && entity.id >= 100 {
                 self.players.push(entity);
-            } else {
+            } else if entity.id >= 1000 {
                 self.enemies.push(entity);
             }
         }
@@ -123,9 +202,10 @@ impl GameState {
         items_path: &str,
         skills_path: &str,
     ) -> io::Result<()> {
-        self.load_entities(entities_path)?;
-        self.load_items(items_path)?;
+        println!("Reloading game data...");
         self.load_skills(skills_path)?;
+        self.load_items(items_path)?;
+        self.load_entities(entities_path)?;
         Ok(())
     }
 
@@ -136,6 +216,10 @@ impl GameState {
             }
         }
         None
+    }
+
+    pub fn create_player(&mut self, entity: Entity) {
+        self.players.push(entity);
     }
 
     pub fn remove_enemy(&mut self, index: usize) {
@@ -170,5 +254,65 @@ impl GameState {
     /// Is Enemy Alive
     pub fn is_enemy_alive(&self) -> bool {
         self.enemies[self.enemy_index].stats.hp > 0
+    }
+
+    pub fn is_item(&self, id: u32) -> bool {
+        for item in self.items.clone() {
+            if item.id == id {
+                return true;
+            }
+        }
+        false
+    }
+
+    pub fn is_skill(&self, id: u32) -> bool {
+        for skill in self.skills.clone() {
+            if skill.id == id {
+                return true;
+            }
+        }
+        false
+    }
+
+    pub fn get_skill_by_id(&self, id: u32) -> Option<Skill> {
+        for skill in self.skills.clone() {
+            if skill.id == id {
+                return Some(skill);
+            }
+        }
+        None
+    }
+
+    pub fn get_item_by_id(&self, id: u32) -> Option<Item> {
+        for item in self.items.clone() {
+            if item.id == id {
+                return Some(item);
+            }
+        }
+        None
+    }
+
+    pub fn get_default_player(&self) -> Entity {
+        self.entities[0].clone()
+    }
+
+    pub fn get_skills_string(&self) -> String {
+        let mut skills = String::new();
+        let mut i = 1;
+        for skill in self.skills.clone() {
+            skills.push_str(&format!("{}. {}\n", i, skill.get_skill_string()));
+            i += 1;
+        }
+        skills
+    }
+
+    pub fn get_players_string(&self) -> String {
+        let mut players = String::new();
+        let mut i = 1;
+        for player in self.players.clone() {
+            players.push_str(&format!("{}. {}\n", i, player.get_entity_string()));
+            i += 1;
+        }
+        players
     }
 }

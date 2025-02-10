@@ -31,7 +31,7 @@ impl Stats {
     // Get stats string for displaying in the UI.
     pub fn get_stats_string(&self) -> String {
         format!(
-            "HP: {}\nAttack: {}\nDefense: {}\nAgility: {}",
+            "\t\tHP: {}\n\t\tAttack: {}\n\t\tDefense: {}\n\t\tAgility: {}",
             self.hp, self.attack, self.defense, self.agility
         )
     }
