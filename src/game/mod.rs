@@ -20,7 +20,7 @@ pub fn process_command(
 
             let player = &mut state.players[state.player_index];
             let enemy = &mut state.enemies[state.enemy_index];
-            let mut skill_id = 1;
+            let mut _skill_id = 1;
 
             if args.len() < 1 {
                 // Print player skills and ask for input
@@ -28,13 +28,13 @@ pub fn process_command(
                 println!("Enter skill id to use:");
                 let mut input = String::new();
                 std::io::stdin().read_line(&mut input).unwrap();
-                skill_id = input.trim().parse::<usize>().unwrap();
+                _skill_id = input.trim().parse::<usize>().unwrap();
             // else if args[0] is a number
             } else {
-                skill_id = args[0].parse::<usize>().unwrap();
+                _skill_id = args[0].parse::<usize>().unwrap();
             }
 
-            let skill = &mut player.get_skill(skill_id - 1).clone();
+            let skill = &mut player.get_skill(_skill_id - 1).clone();
 
             // execute a combat round
             combat::attack_entity(player, enemy, skill);

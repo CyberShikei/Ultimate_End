@@ -8,18 +8,6 @@ pub enum ItemType {
     Armor,
     Consumable,
     // Other types as needed
-
-    // comparison paramenter
-    // ItemType::Weapon > ItemType::Armor
-    // ItemType::Armor > ItemType::Consumable
-    // ItemType::Consumable > ItemType::Weapon
-    // ItemType::Weapon == ItemType::Weapon
-    // ItemType::Armor == ItemType::Armor
-    // ItemType::Consumable == ItemType::Consumable
-    // ItemType::Weapon != ItemType::Armor
-    // ItemType::Weapon != ItemType::Consumable
-    // ItemType::Armor != ItemType::Consumable
-    // ItemType::Armor != ItemType::Weapon
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
@@ -35,7 +23,7 @@ pub struct Item {
 }
 
 impl Item {
-    pub fn new(
+    pub fn _new(
         id: u32,
         name: &str,
         description: &str,
@@ -51,28 +39,28 @@ impl Item {
         }
     }
 
-    // Implement PartialEq for Item to compare items by id.
-    pub fn id(&self) -> u32 {
+    // Getters
+    pub fn _id(&self) -> u32 {
         self.id
     }
 
-    pub fn name(&self) -> &str {
+    pub fn _name(&self) -> &str {
         &self.name
     }
 
-    pub fn description(&self) -> &str {
+    pub fn _description(&self) -> &str {
         &self.description
     }
 
-    pub fn item_type(&self) -> &ItemType {
+    pub fn _item_type(&self) -> &ItemType {
         &self.item_type
     }
 
-    pub fn stat_modifier(&self) -> &Stats {
+    pub fn _stat_modifier(&self) -> &Stats {
         &self.stat_modifier
     }
 
-    pub fn get_item_string(&self) -> String {
+    pub fn _get_item_string(&self) -> String {
         format!(
             "Name: {}\nDescription: {}\nType: {:?}\nStats:\n{}",
             self.name,

@@ -32,7 +32,7 @@ pub struct Skill {
 }
 
 impl Skill {
-    pub fn new(
+    pub fn _new(
         id: u32,
         name: &str,
         description: &str,
@@ -54,7 +54,7 @@ impl Skill {
         }
     }
 
-    pub fn get_skill_string(&self) -> String {
+    pub fn _get_skill_string(&self) -> String {
         format!(
             "ID, {}\nSkill: {}\nDescription: {}\nType: {:?}\nTarget: {:?}\nClass: {:?}\nPower: {}\nCost: {}\n",
             self.id, self.name, self.description, self.skill_type, self.skill_target, self.skill_class, self.power, self.cost

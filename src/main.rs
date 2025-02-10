@@ -134,7 +134,7 @@ fn welcome_screen() {
     while !exiting_game {
         let line_leader = ">. ";
         let input = ask_user_for_input(&format!("{} ", line_leader));
-        let (command, args) = split_command_args(&input);
+        let (command, _args) = split_command_args(&input);
 
         match command.as_str() {
             "1" | "start" => {

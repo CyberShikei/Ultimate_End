@@ -9,7 +9,6 @@ pub struct Entity {
     pub name: String,
     pub stats: Stats,
     pub inventory: Vec<Item>,
-    // You could later extend with equipment or abilities:
     pub equipment: Vec<Item>,
     pub skills: Vec<Skill>,
 }
@@ -36,7 +35,7 @@ impl Entity {
     }
 
     // Apply item stat modifiers to an entity
-    pub fn apply_item(&mut self, item: &Item) {
+    pub fn _apply_item(&mut self, item: &Item) {
         self.stats.hp += item.stat_modifier.hp;
         self.stats.attack += item.stat_modifier.attack;
         self.stats.defense += item.stat_modifier.defense;
@@ -45,10 +44,11 @@ impl Entity {
 
     fn apply_equipment(&mut self) {
         for item in &self.equipment {
-            self.stats.hp += item.stat_modifier.hp;
-            self.stats.attack += item.stat_modifier.attack;
-            self.stats.defense += item.stat_modifier.defense;
-            self.stats.agility += item.stat_modifier.agility;
+            self.stats.apply_modifier(item.stat_modifier);
+            // self.stats.hp += item.stat_modifier.hp;
+            // self.stats.attack += item.stat_modifier.attack;
+            // self.stats.defense += item.stat_modifier.defense;
+            // self.stats.agility += item.stat_modifier.agility;
         }
     }
 
@@ -181,7 +181,7 @@ impl Entity {
         false
     }
 
-    fn is_inventory(&self) -> bool {
+    fn _is_inventory(&self) -> bool {
         !self.inventory.is_empty()
     }
 }

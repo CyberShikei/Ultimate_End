@@ -205,7 +205,7 @@ impl GameState {
         Ok(())
     }
 
-    fn get_entity_by_id(&self, id: u32) -> Option<Entity> {
+    fn _get_entity_by_id(&self, id: u32) -> Option<Entity> {
         for entity in self.entities.clone() {
             if entity.id == id {
                 return Some(entity);
@@ -228,7 +228,7 @@ impl GameState {
     }
 
     /// Get Mutable Player
-    pub fn get_player(&mut self) -> &mut Entity {
+    pub fn _get_player(&mut self) -> &mut Entity {
         &mut self.players[self.player_index]
     }
 
@@ -243,7 +243,7 @@ impl GameState {
     }
 
     /// Get Mutable Enemy
-    pub fn get_enemy(&mut self) -> &mut Entity {
+    pub fn _get_enemy(&mut self) -> &mut Entity {
         &mut self.enemies[self.enemy_index]
     }
 
@@ -252,7 +252,7 @@ impl GameState {
         self.enemies[self.enemy_index].stats.hp > 0
     }
 
-    pub fn is_item(&self, id: u32) -> bool {
+    pub fn _is_item(&self, id: u32) -> bool {
         for item in self.items.clone() {
             if item.id == id {
                 return true;
@@ -261,7 +261,7 @@ impl GameState {
         false
     }
 
-    pub fn is_skill(&self, id: u32) -> bool {
+    pub fn _is_skill(&self, id: u32) -> bool {
         for skill in self.skills.clone() {
             if skill.id == id {
                 return true;
@@ -292,11 +292,11 @@ impl GameState {
         self.entities[0].clone()
     }
 
-    pub fn get_skills_string(&self) -> String {
+    pub fn _get_skills_string(&self) -> String {
         let mut skills = String::new();
         let mut i = 1;
         for skill in self.skills.clone() {
-            skills.push_str(&format!("{}. {}\n", i, skill.get_skill_string()));
+            skills.push_str(&format!("{}. {}\n", i, skill._get_skill_string()));
             i += 1;
         }
         skills
