@@ -81,13 +81,13 @@ pub fn process_command(
             println!("[ENEMY]\n{}", enemy.get_entity_string());
             Ok(())
         }
-        "show enemies" => {
+        "show_enemies" => {
             for enemy in &state.enemies {
                 println!("{:?}", enemy);
             }
             Ok(())
         }
-        "show inventory" => {
+        "show_inventory" => {
             let player = &state.players[state.player_index];
             for item in &player.inventory {
                 println!("{:?}", item);
@@ -127,7 +127,7 @@ pub fn process_command(
         }
         "help" => {
             println!(
-                "Available commands: attack, run, (un)equip, status, show enemies, show inventory, help, exit"
+                "Available commands: attack, run, (un)equip, status, show_enemies, show_inventory, help, exit"
             );
             Ok(())
         }
