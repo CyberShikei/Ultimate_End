@@ -3,8 +3,9 @@ use crate::game::{entity::Entity, skills::Skill};
 
 pub fn combat_round(attacker: &mut Entity, defender: &mut Entity) {
     // Example combat resolution:
-    let damage = (attacker.stats.attack - defender.stats.defense).max(0);
-    defender.stats.hp -= damage;
+    let skill = attacker.get_skill(0);
+    let damage = attacker.damage_roll(&skill);
+    defender.stats.hp -= damage as i32;
     println!(
         "{} attacks {} for {} damage!",
         attacker.name, defender.name, damage

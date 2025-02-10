@@ -31,7 +31,7 @@ fn start_game(game_state: &mut GameState, save_file: &str) {
     // Main game loop
     loop {
         // Display prompt
-        let line_leader = ">> ";
+        let line_leader = ">>. ";
         let input = ask_user_for_input(&format!("{} ", line_leader));
         let (command, args) = split_command_args(&input);
 
@@ -121,7 +121,7 @@ fn ask_user_select_player(game_state: &mut GameState) {
 fn welcome_screen() {
     println!("");
     println!("+++++++++++++++++++++");
-    println!("Welcome to Ultima End");
+    println!("Welcome to Ultimate End");
     println!("+++++++++++++++++++++");
     println!("");
 
@@ -132,7 +132,7 @@ fn welcome_screen() {
     let mut is_character_loaded = false;
 
     while !exiting_game {
-        let line_leader = "> ";
+        let line_leader = ">. ";
         let input = ask_user_for_input(&format!("{} ", line_leader));
         let (command, args) = split_command_args(&input);
 
@@ -164,7 +164,7 @@ fn welcome_screen() {
                 help();
             }
             "6" | "exit" => {
-                println!("Thanks for playing Ultima End.");
+                println!("Thanks for playing Ultimate End.");
                 exiting_game = true;
             }
             _ => {
@@ -175,24 +175,11 @@ fn welcome_screen() {
 }
 
 fn main() {
-    // // Connect to the database
-    // let db_pool = match connect_to_db() {
-    //     Ok(pool) => {
-    //         println!("Connected to the database.");
-    //         pool
-    //     }
-    //     Err(e) => {
-    //         eprintln!("Failed to connect to the database: {}", e);
-    //         return;
-    //     }
-    // };
-
     // Parse CLI arguments
     let matches = cli::build_cli().get_matches();
     let debug_mode = matches.is_present("debug");
     if debug_mode {
         println!("Debug mode enabled.");
     }
-
     welcome_screen();
 }
