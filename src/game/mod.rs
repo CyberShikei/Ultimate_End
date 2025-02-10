@@ -8,41 +8,44 @@ pub mod stats;
 
 /// Processes a command string by updating the game state accordingly.
 
-pub fn process_command(state: &mut persistence::GameState, command: &str) -> Result<(), String> {
+pub fn process_command(
+    state: &mut persistence::GameState,
+    command: &str,
+    args: Vec<String>,
+) -> Result<(), String> {
     match command.to_lowercase().as_str() {
-        "attack" => {
+        "attack" | "a" => {
             if state.entities.len() < 2 {
                 return Err("Not enough entities to engage in combat.".into());
             }
 
             let player = &mut state.players[state.player_index];
             let enemy = &mut state.enemies[state.enemy_index];
+            let mut skill_id = 1;
 
-            // Print player skills and ask for input
-            println!("Player Skills: {:?}", player.get_skills_string());
-            println!("Enter skill id to use:");
-            let mut input = String::new();
-            std::io::stdin().read_line(&mut input).unwrap();
-            let skill_id = input.trim().parse::<usize>().unwrap();
-            let skill = player.get_skill(skill_id - 1).clone();
-            // Execute a combat round.
-            combat::attack_entity(player, enemy, &skill);
-            // combat::combat_round(player, enemy);
+            if args.len() < 1 {
+                // Print player skills and ask for input
+                println!("Player Skills: {:?}", player.get_skills_string());
+                println!("Enter skill id to use:");
+                let mut input = String::new();
+                std::io::stdin().read_line(&mut input).unwrap();
+                skill_id = input.trim().parse::<usize>().unwrap();
+            // else if args[0] is a number
+            } else {
+                skill_id = args[0].parse::<usize>().unwrap();
+            }
+
+            let skill = &mut player.get_skill(skill_id - 1).clone();
+
+            // execute a combat round
+            combat::attack_entity(player, enemy, skill);
             combat::combat_round(enemy, player);
 
-            if state.enemies[state.enemy_index].stats.hp <= 0 {
+            if !state.is_enemy_alive() {
                 println!("Enemy defeated!");
                 // remove enemy from the state
                 state.remove_enemy(state.enemy_index);
-                // set a new enemy
-                let new_enemy_index = rand::random::<usize>() % state.enemies.len();
             }
-
-            if state.is_player_alive() == false {
-                println!("You died!");
-                return Ok(());
-            }
-
             Ok(())
         }
         "run" => {
@@ -53,8 +56,7 @@ pub fn process_command(state: &mut persistence::GameState, command: &str) -> Res
                 &mut state.enemies[state.enemy_index],
                 &mut state.players[state.player_index],
             );
-            if state.players[state.player_index].stats.hp <= 0 {
-                println!("You died!");
+            if !state.is_player_alive() {
                 return Ok(());
             }
 

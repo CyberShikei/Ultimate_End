@@ -12,28 +12,28 @@ const SKILLS_FILE: &str = "assets/skills.json";
 
 fn help() {
     println!("Commands:");
-    println!("    1. Start: Start game.");
-    println!("    2. Create character: Create a new character.");
-    println!("    3. Load character: Load an existing character.");
-    println!("    4. Show characters: Show all characters.");
+    println!("    1. start: Start game.");
+    println!("    2. cc: Create a new character.");
+    println!("    3. lc: Load an existing character.");
+    println!("    4. sc: Show all characters.");
     println!("    5. help: Display this help message.");
     println!("    6. exit: Exit the game.");
+}
+
+fn split_command_args(input: &str) -> (String, Vec<String>) {
+    let split_input = input.split_whitespace();
+    let command = split_input.clone().next().unwrap_or("").to_lowercase();
+    let args = split_input.skip(1).map(|s| s.to_string()).collect();
+    (command, args)
 }
 
 fn start_game(game_state: &mut GameState, save_file: &str) {
     // Main game loop
     loop {
         // Display prompt
-        print!("> ");
-        io::stdout().flush().unwrap();
-
-        // Read user input
-        let mut input = String::new();
-        if let Err(err) = io::stdin().read_line(&mut input) {
-            eprintln!("Failed to read input: {}", err);
-            continue;
-        }
-        let command = input.trim();
+        let line_leader = ">> ";
+        let input = ask_user_for_input(&format!("{} ", line_leader));
+        let (command, args) = split_command_args(&input);
 
         // Check for exit conditions
         if command.eq_ignore_ascii_case("exit") || command.eq_ignore_ascii_case("quit") {
@@ -42,13 +42,19 @@ fn start_game(game_state: &mut GameState, save_file: &str) {
         }
 
         // Process the command via game logic
-        if let Err(e) = game::process_command(game_state, command) {
+        if let Err(e) = game::process_command(game_state, command.as_str(), args) {
             println!("Error: {}", e);
         }
 
         // Optionally, save the game state after processing the command
         if let Err(e) = game_state.save_to_file(save_file) {
             eprintln!("Failed to save game state: {}", e);
+        }
+
+        // Check for game over conditions
+        if !game_state.is_player_alive() {
+            println!("You died!");
+            break;
         }
     }
 }
@@ -98,6 +104,7 @@ fn ask_user_create_player(game_state: &mut GameState) {
     player.equipment = default_player.equipment.clone();
 
     game_state.create_player(player);
+    game_state.set_player(game_state.players.len() - 1);
 }
 
 fn ask_user_select_player(game_state: &mut GameState) {
@@ -122,34 +129,34 @@ fn welcome_screen() {
 
     let save_file = SAVE_FILE;
     let mut game_state = load_game_state(save_file);
-    let mut is_game_state_loaded = true;
+    let mut is_character_loaded = false;
 
     while !exiting_game {
-        print!("> ");
-        let mut input = String::new();
-        io::stdin().read_line(&mut input).unwrap();
-        let command = input.trim();
+        let line_leader = "> ";
+        let input = ask_user_for_input(&format!("{} ", line_leader));
+        let (command, args) = split_command_args(&input);
 
-        match command {
+        match command.as_str() {
             "1" | "start" => {
-                if is_game_state_loaded {
+                if is_character_loaded {
                     println!("Starting a new game.");
                     //let &mut run_game_state = &mut game_state;
                     start_game(&mut game_state, save_file);
                 } else {
-                    println!("No game state loaded. Please load a character or create a new one.");
+                    println!("No character loaded. Please load a character or create a new one.");
                 }
             }
-            "2" | "create character" => {
+            "2" | "cc" => {
                 println!("Creating a new character.");
                 ask_user_create_player(&mut game_state);
+                is_character_loaded = true;
             }
-            "3" | "load character" => {
+            "3" | "lc" => {
                 println!("Loading an existing character.");
                 ask_user_select_player(&mut game_state);
-                is_game_state_loaded = true;
+                is_character_loaded = true;
             }
-            "4" | "show characters" => {
+            "4" | "sc" => {
                 println!("Showing all characters.");
                 println!("{}", game_state.get_players_string());
             }
@@ -161,7 +168,7 @@ fn welcome_screen() {
                 exiting_game = true;
             }
             _ => {
-                println!("Invalid command. Please try again.");
+                println!("Invalid command. Type 'help' for a list of commands.");
             }
         }
     }

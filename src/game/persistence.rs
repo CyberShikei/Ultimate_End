@@ -114,10 +114,6 @@ impl GameState {
                 let skill = self.get_skill_by_id(skill_id);
                 if let Some(skill) = skill {
                     new_entity.skills.push(skill);
-                    println!(
-                        "added skill {} to entity {}",
-                        new_entity.skills[i].name, new_entity.name
-                    );
                 } else {
                     println!(
                         "Skill with id {} not found for entity {}",
@@ -129,7 +125,7 @@ impl GameState {
                 let item_id = entity.inventory[i];
                 let item = self.get_item_by_id(item_id);
                 if let Some(item) = item {
-                    new_entity.inventory[i] = item;
+                    new_entity.inventory.push(item);
                 } else {
                     println!(
                         "Item with id {} not found for entity {}",
@@ -141,7 +137,7 @@ impl GameState {
                 let item_id = entity.equipment[i];
                 let item = self.get_item_by_id(item_id);
                 if let Some(item) = item {
-                    new_entity.equipment[i] = item;
+                    new_entity.equipment.push(item);
                 } else {
                     println!(
                         "Item with id {} not found for entity {}",
