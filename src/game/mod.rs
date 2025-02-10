@@ -1,5 +1,4 @@
 pub mod combat;
-pub mod db;
 pub mod entity;
 pub mod item;
 pub mod persistence;
