@@ -23,11 +23,11 @@
                 "defense": 0,
                 "agility": 0
             }
-        }.
+        },
         {
-            "id": 301,
-            "name": "Leather Armour",
-            "description": "A set of leather armour.",
+            "id": 300,
+            "name": "Leather Armor",
+            "description": "Armor made of leather.",
             "item_type": "Armour",
             "stat_modifier": {
                 "hp": 0,
@@ -37,7 +37,7 @@
             }
         },
         {
-            "id": 302,
+            "id": 301,
             "name": "Iron Helmet",
             "description": "A helmet made of iron.",
             "item_type": "Armour",

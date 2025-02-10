@@ -78,7 +78,6 @@ impl Entity {
                 let eq_item = item.clone();
                 self.equipment.push(eq_item);
                 self.remove_item_from_inventory(&item);
-                println!("Equipped item: {}", item.name);
             }
         } else {
             println!("Item not in inventory.");

@@ -9,8 +9,8 @@
             "defense": 5,
             "agility": 5
         },
-        "inventory": [101],
-        "equipment": [],
+        "inventory": [401],
+        "equipment": [101, 301],
         "skills": [10000, 10010]
     },
     {

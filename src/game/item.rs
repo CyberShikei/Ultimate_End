@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum ItemType {
     Weapon,
-    Armor,
+    Armour,
     Consumable,
     // Other types as needed
 }

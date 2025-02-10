@@ -96,7 +96,7 @@ impl GameState {
         let wrapper: EntitiesWrapper = serde_json::from_str(&data).map_err(|e| {
             io::Error::new(
                 ErrorKind::InvalidData,
-                format!("Deserialization error: {}", e),
+                format!("Deserialization error loading entities: {}", e),
             )
         })?;
         // iterate over entities and replace ids with actual objects
@@ -137,7 +137,9 @@ impl GameState {
                 let item_id = entity.equipment[i];
                 let item = self.get_item_by_id(item_id);
                 if let Some(item) = item {
-                    new_entity.equipment.push(item);
+                    let c_item = item.clone();
+                    new_entity.inventory.push(item);
+                    new_entity.equip_item(c_item);
                 } else {
                     println!(
                         "Item with id {} not found for entity {}",
@@ -173,7 +175,7 @@ impl GameState {
         let wrapper: ItemsWrapper = serde_json::from_str(&data).map_err(|e| {
             io::Error::new(
                 ErrorKind::InvalidData,
-                format!("Deserialization error: {}", e),
+                format!("Deserialization error loading items: {}", e),
             )
         })?;
         self.items = wrapper.items;
@@ -185,7 +187,7 @@ impl GameState {
         let wrapper: SkillsWrapper = serde_json::from_str(&data).map_err(|e| {
             io::Error::new(
                 ErrorKind::InvalidData,
-                format!("Deserialization error: {}", e),
+                format!("Deserialization error loading skills: {}", e),
             )
         })?;
         self.skills = wrapper.skills;
