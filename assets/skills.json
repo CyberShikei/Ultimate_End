@@ -1,0 +1,14 @@
+{
+    "skills": [
+        {
+            "id": 1000,
+            "name": "Fireball",
+            "description": "A fireball spell that deals 10 damage to the target.",
+            "power": 10,
+            "cost": 10,
+            "skill_type": "Active",
+            "skill_target": "SingleTarget",
+            "skill_class": "Magical"
+        }
+    ]
+}

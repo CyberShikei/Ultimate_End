@@ -1,10 +1,22 @@
 mod cli;
 mod game;
 
-use crate::game::persistence::GameState;
+use crate::game::{db::connect_to_db, persistence::GameState};
 use std::io::{self, Write};
 
 fn main() {
+    // Connect to the database
+    let db_pool = match connect_to_db() {
+        Ok(pool) => {
+            println!("Connected to the database.");
+            pool
+        }
+        Err(e) => {
+            eprintln!("Failed to connect to the database: {}", e);
+            return;
+        }
+    };
+
     // Parse CLI arguments
     let matches = cli::build_cli().get_matches();
     let debug_mode = matches.is_present("debug");
@@ -15,6 +27,7 @@ fn main() {
     let save_file = "savegame.json";
     let enities_file = "assets/entities.json";
     let items_file = "assets/items.json";
+    let skills_file = "assets/skills.json";
 
     // Attempt to load an existing game state. If not found, create a new state.
     let mut game_state = match GameState::load_from_file(save_file) {
@@ -31,6 +44,9 @@ fn main() {
             }
             if let Err(e) = state.load_items(items_file) {
                 eprintln!("Failed to load items: {}", e);
+            }
+            if let Err(e) = state.load_skills(skills_file) {
+                eprintln!("Failed to load skills: {}", e);
             }
             state
         }

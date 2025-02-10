@@ -10,7 +10,8 @@
             "agility": 5
         },
         "inventory": [],
-        "equipment": []
+        "equipment": [],
+        "skills": []
     },
     {
         "id": 100,
@@ -22,7 +23,8 @@
                 "agility": 2
             },
         "inventory": [],
-        "equipment": []
+        "equipment": [],
+        "skills": []
     },
     {
         "id": 101,
@@ -34,7 +36,8 @@
                 "agility": 3
             },
         "inventory": [],
-        "equipment": []
+        "equipment": [],
+        "skills": []
     },
     {
         "id": 102,
@@ -46,7 +49,8 @@
                 "agility": 5
             },
         "inventory": [],
-        "equipment": []
+        "equipment": [],
+        "skills": []
     },
     {
         "id": 103,
@@ -58,7 +62,8 @@
                 "agility": 7
             },
         "inventory": [],
-        "equipment": []
+        "equipment": [],
+        "skills": []
     }
     ]
 }

@@ -1,7 +1,9 @@
 pub mod combat;
+pub mod db;
 pub mod entity;
 pub mod item;
 pub mod persistence;
+pub mod skills;
 pub mod stats;
 
 /// Processes a command string by updating the game state accordingly.
@@ -16,8 +18,16 @@ pub fn process_command(state: &mut persistence::GameState, command: &str) -> Res
             let player = &mut state.players[state.player_index];
             let enemy = &mut state.enemies[state.enemy_index];
 
+            // Print player skills and ask for input
+            println!("Player Skills: {:?}", player.get_skills_string());
+            println!("Enter skill id to use:");
+            let mut input = String::new();
+            std::io::stdin().read_line(&mut input).unwrap();
+            let skill_id = input.trim().parse::<usize>().unwrap();
+            let skill = player.get_skill(skill_id - 1).clone();
             // Execute a combat round.
-            combat::combat_round(player, enemy);
+            combat::attack_entity(player, enemy, &skill);
+            // combat::combat_round(player, enemy);
             combat::combat_round(enemy, player);
 
             if state.enemies[state.enemy_index].stats.hp <= 0 {

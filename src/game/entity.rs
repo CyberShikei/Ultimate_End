@@ -1,5 +1,6 @@
 // src/game/entity.rs
-use crate::game::{item::Item, stats::Stats};
+use crate::game::{item::Item, skills::Skill, stats::Stats};
+use rand::Rng;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -10,6 +11,7 @@ pub struct Entity {
     pub inventory: Vec<Item>,
     // You could later extend with equipment or abilities:
     pub equipment: Vec<Item>,
+    pub skills: Vec<Skill>,
 }
 
 impl Entity {
@@ -21,7 +23,16 @@ impl Entity {
             stats: Stats::new(),
             inventory: Vec::new(),
             equipment: Vec::new(),
+            skills: Vec::new(),
         }
+    }
+
+    pub fn damage_roll(&self, skill: &Skill) -> u32 {
+        let mut rng = rand::thread_rng();
+        let dmg_roll: u32 = rng.gen_range(0..skill.power);
+        let atck: u32 = self.stats.attack as u32;
+        let damage = dmg_roll + atck;
+        damage
     }
 
     // Apply item stat modifiers to an entity
@@ -108,6 +119,27 @@ impl Entity {
             equipment_string.push_str(&format!("ID: {}, Name: {}", item.id, item.name));
         }
         equipment_string
+    }
+
+    pub fn get_skills_string(&self) -> String {
+        let mut skills_string = String::new();
+        let mut i = 0;
+        for skill in &self.skills {
+            i += 1;
+            skills_string.push_str(&format!("ID: {}, Name: {}", i, skill.name));
+        }
+        skills_string
+    }
+
+    pub fn get_skill(&self, index: usize) -> &Skill {
+        let mut i = 0;
+        for skill in &self.skills {
+            if i == index {
+                return skill;
+            }
+            i += 1;
+        }
+        panic!("Skill not found.");
     }
 
     pub fn get_equipment(&self, item_id: usize) -> &Item {

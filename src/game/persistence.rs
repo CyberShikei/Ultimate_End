@@ -1,6 +1,6 @@
 // src/game/persistence.rs
 use crate::game::entity::Entity;
-use crate::game::item::Item;
+use crate::game::{item::Item, skills::Skill};
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::io::{self, ErrorKind};
@@ -9,6 +9,7 @@ use std::io::{self, ErrorKind};
 pub struct GameState {
     pub entities: Vec<Entity>,
     pub items: Vec<Item>,
+    pub skills: Vec<Skill>,
 
     pub players: Vec<Entity>,
     pub enemies: Vec<Entity>,
@@ -28,12 +29,18 @@ struct ItemsWrapper {
     items: Vec<Item>,
 }
 
+#[derive(Serialize, Deserialize)]
+struct SkillsWrapper {
+    skills: Vec<Skill>,
+}
+
 impl GameState {
     /// Create a new, empty game state.
     pub fn new() -> Self {
         Self {
             entities: Vec::new(),
             items: Vec::new(),
+            skills: Vec::new(),
             players: Vec::new(),
             enemies: Vec::new(),
             player_index: 0,
@@ -98,9 +105,27 @@ impl GameState {
         Ok(())
     }
 
-    pub fn reload(&mut self, entities_path: &str, items_path: &str) -> io::Result<()> {
+    pub fn load_skills(&mut self, path: &str) -> io::Result<()> {
+        let data = fs::read_to_string(path)?;
+        let wrapper: SkillsWrapper = serde_json::from_str(&data).map_err(|e| {
+            io::Error::new(
+                ErrorKind::InvalidData,
+                format!("Deserialization error: {}", e),
+            )
+        })?;
+        self.skills = wrapper.skills;
+        Ok(())
+    }
+
+    pub fn reload(
+        &mut self,
+        entities_path: &str,
+        items_path: &str,
+        skills_path: &str,
+    ) -> io::Result<()> {
         self.load_entities(entities_path)?;
         self.load_items(items_path)?;
+        self.load_skills(skills_path)?;
         Ok(())
     }
 
