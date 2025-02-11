@@ -44,7 +44,7 @@ impl Item {
         self.id
     }
 
-    pub fn _name(&self) -> &str {
+    pub fn name(&self) -> &str {
         &self.name
     }
 

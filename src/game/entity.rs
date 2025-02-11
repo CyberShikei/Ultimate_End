@@ -118,35 +118,19 @@ impl Entity {
     // Get entity string for displaying in the UI.
     pub fn get_entity_string(&self) -> String {
         format!(
-            "Name: {}\n\tStats:\n{}\n\tInventory:\n{}\n\tEquipment:\n{}",
+            "Name: {}\n\tStats:\n{}\n\tInventory:\n{}\tEquipment:\n{}",
             self.name,
             self.stats.get_stats_string(),
-            self.get_inventory_str(),
-            self.get_equipment_str()
+            self.get_inventory_string(),
+            self.get_equipment_string()
         )
-    }
-
-    fn get_inventory_str(&self) -> String {
-        let mut inventory = String::new();
-        for item in &self.inventory {
-            inventory.push_str(&format!("\t\t{}\n", item.name));
-        }
-        inventory
-    }
-
-    fn get_equipment_str(&self) -> String {
-        let mut equipment = String::new();
-        for item in &self.equipment {
-            equipment.push_str(&format!("\t\t{}\n", item.name));
-        }
-        equipment
     }
 
     pub fn get_inventory_string(&self) -> String {
         let mut inventory_string = String::new();
         let mut i = 1;
         for item in &self.inventory {
-            inventory_string.push_str(&format!("ID: {}, Name: {}", i, item.name));
+            inventory_string.push_str(&format!("\t\t{}. {}\n", i, item.name));
             i += 1;
         }
         inventory_string
@@ -156,7 +140,7 @@ impl Entity {
         let mut equipment_string = String::new();
         let mut i = 1;
         for item in &self.equipment {
-            equipment_string.push_str(&format!("ID: {}, Name: {}", i, item.name));
+            equipment_string.push_str(&format!("\t\t{}. {}\n", i, item.name));
             i += 1;
         }
         equipment_string

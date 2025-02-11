@@ -127,7 +127,7 @@ pub fn process_command(
         }
         "use_item" => {
             let player = &mut state.players[state.player_index];
-            println!("Inventory: {}", player.get_inventory_string());
+            println!("\tInventory:\n{}", player.get_inventory_string());
             println!("Enter item id to use:");
             let mut input = String::new();
             std::io::stdin().read_line(&mut input).unwrap();
@@ -139,7 +139,7 @@ pub fn process_command(
         }
         "help" => {
             println!(
-                "Available commands: attack, run, (un)equip, status, show_enemies, show_inventory, help, exit"
+                "Available commands: attack, run, (un)equip, use_item, status, show_enemies, show_inventory, help, exit"
             );
             Ok(())
         }
