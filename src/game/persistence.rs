@@ -246,7 +246,7 @@ impl GameState {
             let gets_item = rand::random::<f32>() < item_drop_rate;
             if gets_item {
                 let item = self.items[rand::random::<usize>() % self.items.len()].clone();
-                if item.is_consumable() {
+                if !item.is_consumable() {
                     let c_item = item.clone();
                     new_enemy.inventory.push(item);
                     new_enemy.equip_item(c_item);
