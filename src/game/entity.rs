@@ -69,11 +69,11 @@ impl Entity {
         self.un_apply_equipment();
         if self.is_item_in_inventory(&item) {
             if item.item_type == ItemType::Consumable {
-                println!("Cannot equip consumable item.");
+                return;
             } else if self.is_item_equipped(&item) {
-                println!("Item already equipped.");
+                return;
             } else if self.is_equipment_slot_taken(&item) {
-                println!("Item type already equipped.");
+                return;
             } else {
                 let eq_item = item.clone();
                 self.equipment.push(eq_item);
@@ -118,24 +118,46 @@ impl Entity {
     // Get entity string for displaying in the UI.
     pub fn get_entity_string(&self) -> String {
         format!(
-            "Name: {}\n\tStats:\n{}",
+            "Name: {}\n\tStats:\n{}\n\tInventory:\n{}\n\tEquipment:\n{}",
             self.name,
-            self.stats.get_stats_string()
+            self.stats.get_stats_string(),
+            self.get_inventory_str(),
+            self.get_equipment_str()
         )
+    }
+
+    fn get_inventory_str(&self) -> String {
+        let mut inventory = String::new();
+        for item in &self.inventory {
+            inventory.push_str(&format!("\t\t{}\n", item.name));
+        }
+        inventory
+    }
+
+    fn get_equipment_str(&self) -> String {
+        let mut equipment = String::new();
+        for item in &self.equipment {
+            equipment.push_str(&format!("\t\t{}\n", item.name));
+        }
+        equipment
     }
 
     pub fn get_inventory_string(&self) -> String {
         let mut inventory_string = String::new();
+        let mut i = 1;
         for item in &self.inventory {
-            inventory_string.push_str(&format!("ID: {}, Name: {}", item.id, item.name));
+            inventory_string.push_str(&format!("ID: {}, Name: {}", i, item.name));
+            i += 1;
         }
         inventory_string
     }
 
     pub fn get_equipment_string(&self) -> String {
         let mut equipment_string = String::new();
+        let mut i = 1;
         for item in &self.equipment {
-            equipment_string.push_str(&format!("ID: {}, Name: {}", item.id, item.name));
+            equipment_string.push_str(&format!("ID: {}, Name: {}", i, item.name));
+            i += 1;
         }
         equipment_string
     }
@@ -162,19 +184,15 @@ impl Entity {
     }
 
     pub fn get_equipment(&self, item_id: usize) -> &Item {
-        for item in &self.equipment {
-            if item.id == item_id as u32 {
-                return item;
-            }
+        if item_id != 0 && item_id <= self.equipment.len() {
+            return &self.equipment[item_id - 1];
         }
         panic!("Item not found in equipment.");
     }
 
     pub fn get_item(&self, item_id: usize) -> &Item {
-        for item in &self.inventory {
-            if item.id == item_id as u32 {
-                return item;
-            }
+        if item_id != 0 && item_id <= self.inventory.len() {
+            return &self.inventory[item_id - 1];
         }
         panic!("Item not found in inventory.");
     }

@@ -8,6 +8,8 @@ use std::io::{self, ErrorKind};
 #[derive(Serialize, Deserialize)]
 pub struct GameState {
     pub entities: Vec<Entity>,
+    pub pc_ents: Vec<Entity>,
+    pub npc_ents: Vec<Entity>,
     pub items: Vec<Item>,
     pub skills: Vec<Skill>,
 
@@ -44,11 +46,15 @@ struct SkillsWrapper {
     skills: Vec<Skill>,
 }
 
+const SPAWN_LIMIT: usize = 10;
+const ITEM_DROP_RATE: f32 = 0.5;
 impl GameState {
     /// Create a new, empty game state.
     pub fn new() -> Self {
         Self {
             entities: Vec::new(),
+            pc_ents: Vec::new(),
+            npc_ents: Vec::new(),
             items: Vec::new(),
             skills: Vec::new(),
             players: Vec::new(),
@@ -161,9 +167,9 @@ impl GameState {
 
         for entity in self.entities.clone() {
             if entity.id < 1000 && entity.id >= 100 {
-                self.players.push(entity);
+                self.pc_ents.push(entity);
             } else if entity.id >= 1000 {
-                self.enemies.push(entity);
+                self.npc_ents.push(entity);
             }
         }
 
@@ -204,6 +210,8 @@ impl GameState {
         self.load_skills(skills_path)?;
         self.load_items(items_path)?;
         self.load_entities(entities_path)?;
+
+        self.populate_enemies();
         Ok(())
     }
 
@@ -218,6 +226,42 @@ impl GameState {
 
     pub fn create_player(&mut self, entity: Entity) {
         self.players.push(entity);
+    }
+
+    pub fn create_enemy(&mut self, entity: Entity) {
+        self.enemies.push(entity);
+    }
+
+    pub fn spawn_enemy(&mut self) {
+        // let enemy = self.enemies[self.enemy_index].clone();
+        // let mut new_enemy = enemy.clone();
+        // self.enemies.push(new_enemy);
+        let spawn_limit = SPAWN_LIMIT;
+        let item_drop_rate = ITEM_DROP_RATE;
+
+        if self.enemies.len() < spawn_limit {
+            let rand_index = rand::random::<usize>() % self.npc_ents.len();
+            let enemy = self.npc_ents[rand_index].clone();
+            let mut new_enemy = enemy.clone();
+            let gets_item = rand::random::<f32>() < item_drop_rate;
+            if gets_item {
+                let item = self.items[rand::random::<usize>() % self.items.len()].clone();
+                if item.is_consumable() {
+                    let c_item = item.clone();
+                    new_enemy.inventory.push(item);
+                    new_enemy.equip_item(c_item);
+                } else {
+                    new_enemy.inventory.push(item);
+                }
+            }
+            self.create_enemy(new_enemy);
+        }
+    }
+
+    pub fn populate_enemies(&mut self) {
+        while self.enemies.len() < SPAWN_LIMIT {
+            self.spawn_enemy();
+        }
     }
 
     pub fn remove_enemy(&mut self, index: usize) {

@@ -69,4 +69,8 @@ impl Item {
             self.stat_modifier.get_stats_string()
         )
     }
+
+    pub fn is_consumable(&self) -> bool {
+        self.item_type == ItemType::Consumable
+    }
 }
