@@ -15,7 +15,7 @@ Ultimate End is a CLI combat game built in Rust where you can choose your charac
 
 ## Usage
 - Get a list of commands `help`
-- Start a new game `start`
+- Start the game `start`
 - Create a new character `cc`
 - Load a character `lc`
 - Show characters `sc`
